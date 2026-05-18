@@ -17,6 +17,7 @@ import Academics from "./pages/Academics";
 import Admissions from "./pages/Admission";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/Notfound";
+import Gallery from "./pages/Gallery";
 
 /**
  * ScrollToTop ensures that every time a user navigates to a new page,
@@ -50,10 +51,12 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/academics" element={<Academics />} />
             <Route path="/admissions" element={<Admissions />} />
+            <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
 
             {/* Catch-all route for 404 Page Not Found */}
             <Route path="*" element={<NotFound />} />
+            
           </Routes>
         </main>
 
