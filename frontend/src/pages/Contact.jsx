@@ -20,8 +20,7 @@ const Contact = () => {
     setIsLoading(true);
     try {
       const res = await getAIResponse(question);
-      setReply(res);
-    // eslint-disable-next-line no-unused-vars
+      setReply(res); // eslint-disable-next-line no-unused-vars
     } catch (error) {
       setReply(
         "Sorry, I'm having trouble connecting right now. Please try again.",

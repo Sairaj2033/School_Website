@@ -10,6 +10,7 @@ import {
   GraduationCap,
   ShieldCheck,
 } from "lucide-react";
+import { Link } from 'react-router-dom';
 
 const Admissions = () => {
   const [openFaq, setOpenFaq] = useState(null);
@@ -103,7 +104,7 @@ const Admissions = () => {
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-4 text-slate-700">
                   <CheckCircle2
-                    className="text-green-500 flex-shrink-0"
+                    className="text-green-500 shrink-0"
                     size={24}
                   />
                   <span className="text-lg">{item}</span>
@@ -119,9 +120,12 @@ const Admissions = () => {
               Students scoring above 95% in their entrance assessment are
               eligible for a<strong> 50% Tuition Fee Waiver</strong>.
             </p>
-            <button className="text-blue-600 font-bold hover:underline flex items-center gap-2">
+            <Link
+              to="/admissions/scholarship"
+              className="text-blue-600 font-bold hover:underline flex items-center gap-2"
+            >
               View Scholarship Criteria <ChevronDown size={16} />
-            </button>
+            </Link>
           </div>
         </div>
 
