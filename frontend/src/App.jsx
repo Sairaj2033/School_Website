@@ -18,9 +18,9 @@ import Academics from "./pages/Academics";
 import Admissions from "./pages/Admission";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/Notfound";
+import EventCalendar from "./pages/EventCalendar";
 import Scholarship from "./pages/Scholarship";
 import Gallery from "./pages/Gallery";
-
 /**
  * ScrollToTop ensures that every time a user navigates to a new page,
  * the window scrolls back to the top automatically.
@@ -56,8 +56,8 @@ const App = () => {
             <Route path="/admissions" element={<Admissions />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/admissions/scholarship" element={<Scholarship/>} />
-
+            <Route path="/calendar" element={<EventCalendar />} />
+            <Route path="/admissions/scholarship" element={<Scholarship />} /> 
             
             {/* Catch-all route for 404 Page Not Found */}
             <Route path="*" element={<NotFound />} />
