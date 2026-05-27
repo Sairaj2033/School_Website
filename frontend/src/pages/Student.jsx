@@ -46,7 +46,7 @@ const Student = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-700 to-indigo-700 text-white rounded-3xl p-8 shadow-2xl mb-10">
         <div className="flex items-center gap-4">
@@ -55,7 +55,7 @@ const Student = () => {
           </div>
 
           <div>
-            <h1 className="text-4xl font-bold">
+            <h1 className="text-2xl sm:text-4xl font-bold">
               Welcome Back, Deepali 👋
             </h1>
 
@@ -146,7 +146,7 @@ const Student = () => {
           {resources.map((resource) => (
             <div
               key={resource.id}
-              className="flex items-center justify-between border rounded-2xl p-5 hover:shadow-2xl hover:-translate-y-1 transition duration-300 bg-gradient-to-r from-white to-blue-50"
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border rounded-2xl p-5 hover:shadow-2xl hover:-translate-y-1 transition duration-300 bg-gradient-to-r from-white to-blue-50"
             >
               <p className="font-semibold text-gray-700 text-lg">
                 {resource.name}

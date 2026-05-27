@@ -160,7 +160,7 @@ const DownloadProspectus = () => {
         </section>
 
         {/* Detailed Contents Checklist */}
-        <section className="bg-slate-900 rounded-[3rem] p-10 md:p-16 mb-32">
+        <section className="bg-slate-900 rounded-2xl sm:rounded-[3rem] p-6 sm:p-10 md:p-16 mb-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold text-white mb-8">
@@ -204,7 +204,7 @@ const DownloadProspectus = () => {
         </section>
 
         {/* Bottom CTA */}
-        <section className="text-center bg-blue-50 p-12 rounded-3xl border border-blue-100">
+        <section className="text-center bg-blue-50 p-6 sm:p-12 rounded-3xl border border-blue-100">
           <BookOpen className="mx-auto text-blue-600 mb-6" size={48} />
           <h2 className="text-3xl font-bold text-slate-900 mb-4">
             Have Questions About Admissions?
