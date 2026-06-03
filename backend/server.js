@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/Auth");
 const inquiryRoutes = require('./routes/inquiryRoutes.js');
-const inquiryRoutes  = require ("./routes/inquiryRoutes.js");
+const contactRoutes = require('./routes/contactRoutes.js');
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -14,6 +14,7 @@ app.use(express.json());
 // routes
 app.use("/api/auth", authRoutes);
 app.use("/api/inquiries", inquiryRoutes);
+app.use("/api/contact", contactRoutes);
 // connect to mongodb
 
 // connect to mongodb with proper try-catch

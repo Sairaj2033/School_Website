@@ -1,4 +1,5 @@
 import api from "../utils/axios";
+import ContactFeedbackForm from "../components/Contact";
 
 import { useState } from "react";
 import { getAIResponse } from "../services/geminiService";
@@ -385,6 +386,11 @@ const Contact = () => {
               </form>
             </div>
           </div>
+        </div>
+
+        {/* Feedback Form Section */}
+        <div className="mt-12">
+          <ContactFeedbackForm />
         </div>
       </div>
     </div>
