@@ -23,6 +23,10 @@ import Scholarship from "./pages/Scholarship";
 import Gallery from "./pages/Gallery";
 import Student from "./pages/Student";
 import DownloadProspectus from "./pages/DownloadProspectus";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 /**
  * ScrollToTop ensures that every time a user navigates to a new page,
@@ -63,7 +67,13 @@ const App = () => {
             <Route path="/admissions/scholarship" element={<Scholarship />} />
             <Route path="/prospectus" element={<DownloadProspectus />} /> 
             <Route path="/student" element={<Student />} />
-            
+            <Route path="/login" element={<Login />} />
+            <Route path="/login/:role" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/register/:role" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+
             {/* Catch-all route for 404 Page Not Found */}
             <Route path="*" element={<NotFound />} />
             
