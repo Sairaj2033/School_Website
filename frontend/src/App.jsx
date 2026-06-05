@@ -25,7 +25,7 @@ import Gallery from "./pages/Gallery";
 import Student from "./pages/Student";
 import DownloadProspectus from "./pages/DownloadProspectus";
 import FacultyDirectory from "./pages/FacultyDirectory";
-
+import TeacherDashboard from "./pages/TeacherDashboard";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -84,9 +84,7 @@ const App = () => {
             <Route path="/student" element={<Student />} />
 
 
-            {/* ADD THIS */}
-
-
+            <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
 
             <Route path="/login" element={<Login />} />
             <Route path="/login/:role" element={<Login />} />
