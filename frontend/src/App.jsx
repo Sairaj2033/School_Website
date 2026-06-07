@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import Application from "./pages/Application";
 import {
   HashRouter as Router,
   Routes,
@@ -29,7 +28,6 @@ import DownloadProspectus from "./pages/DownloadProspectus";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
-
 /**
  * ScrollToTop ensures that every time a user navigates to a new page,
  * the window scrolls back to the top automatically.
@@ -47,39 +45,28 @@ const ScrollToTop = () => {
 const App = () => {
   return (
     <Router>
+      {/* Helper to reset scroll position on navigation */}
       <ScrollToTop />
 
-
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-
-        <main className="grow">
-
       {/* Main Layout Wrapper */}
-      <div
-        className="flex flex-col min-h-screen"
-      >
-
+      <div className="flex flex-col min-h-screen">
         {/* Navigation Bar */}
         <Navbar />
 
         {/* Page Content: This section grows to fill space, pushing Footer down */}
-        <main className="grow pt-16">
-
+        <main className="grow">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/teacher" element={<Teacher />} />
+            <Route path="/teacher" element={<Teacher/>}/>
             <Route path="/academics" element={<Academics />} />
             <Route path="/admissions" element={<Admissions />} />
-            <Route path="/apply" element={<Application />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/calendar" element={<EventCalendar />} />
             <Route path="/admissions/scholarship" element={<Scholarship />} />
-            <Route path="/prospectus" element={<DownloadProspectus />} />
+            <Route path="/prospectus" element={<DownloadProspectus />} /> 
             <Route path="/student" element={<Student />} />
-
             <Route path="/login" element={<Login />} />
             <Route path="/login/:role" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -87,14 +74,16 @@ const App = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             {/* Catch-all route for 404 Page Not Found */}
-
             <Route path="*" element={<NotFound />} />
+            
           </Routes>
         </main>
 
+        {/* Site Footer */}
         <Footer />
       </div>
     </Router>
   );
 };
+
 export default App;

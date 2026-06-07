@@ -1,16 +1,19 @@
 import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, NavLink } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
+import { Moon, Sun } from "lucide-react";
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
-    { name: 'Teacher', path: '/teacher' },
+    { name: "Teacher", path: "/teacher" },
     { name: "Academics", path: "/academics" },
     { name: "Contact", path: "/contact" },
     { name: "Calendar", path: "/calendar" },
@@ -49,20 +52,22 @@ const Navbar = () => {
                 <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
                   <span className="text-blue-600 font-bold text-xl">E</span>
                 </div>
-                {/* Logo text changed to white for contrast */}
                 <span className="text-xl font-bold text-white tracking-tight">
                   EduStream
                 </span>
-              </Link>
+              </NavLink>
             </div>
 
-            {/* Desktop Links - Changed text color to white */}
+            {/* Desktop Links - WITH SMOOTH UNDERLINE TRANSITION */}
             <div className="hidden md:flex items-center space-x-4 lg:space-x-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className="text-blue-50 hover:text-white transition-colors font-medium"
+                  className={`font-medium transition-colors ${location.pathname === link.path
+                      ? "text-white border-b-2 border-white pb-1"
+                      : "text-blue-50 hover:text-white"
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -85,6 +90,21 @@ const Navbar = () => {
                         strokeLinejoin="round"
                         strokeWidth="2"
                         d="M19 9l-7 7-7-7"
+
+                <NavLink key={link.name} to={link.path}>
+                  {({ isActive }) => (
+                    <div className="relative pb-1 group">
+                      <span
+                        className={`font-medium transition-colors duration-300 ${
+                          isActive ? "text-white" : "text-blue-50 group-hover:text-white"
+                        }`}
+                      >
+                        {link.name}
+                      </span>
+                      <span
+                        className={`absolute bottom-0 left-0 w-full h-0.5 bg-white transition-transform duration-300 ease-out ${
+                          isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                        }`}
                       />
                     </svg>
                   </div>
@@ -166,11 +186,17 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Mobile Menu Button - Changed to white */}
+
+            {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-white focus:outline-none"
+                aria-label={
+                  isOpen ? "Close navigation menu" : "Open navigation menu"
+                }
+                aria-expanded={isOpen}
+                aria-controls="mobile-menu"
+                className="text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
               >
                 <svg
                   className="h-7 w-7"
@@ -197,21 +223,31 @@ const Navbar = () => {
               </button>
             </div>
           </div>
-          
+
+
         </div>
 
-        {/* Mobile Menu Dropdown - Matching Blue Theme */}
+        {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden bg-blue-700 border-t border-blue-500 py-4 px-4 space-y-1">
+          <div
+            id="mobile-menu"
+            className="md:hidden bg-blue-700 border-t border-blue-500 py-4 px-4 space-y-1"
+          >
             {navLinks.map((link) => (
-              <Link
+              <NavLink
                 key={link.name}
                 to={link.path}
                 onClick={() => setIsOpen(false)}
-                className="block px-3 py-2 rounded-md text-base font-medium text-blue-50 hover:bg-blue-600"
+                className={({ isActive }) =>
+                  `block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 ${
+                    isActive
+                      ? "bg-blue-800 text-white border-l-4 border-white"
+                      : "text-blue-50 hover:bg-blue-600"
+                  }`
+                }
               >
                 {link.name}
-              </Link>
+              </NavLink>
             ))}
             {user ? (
               <div className="pt-4 mt-2 border-t border-blue-500 space-y-2">

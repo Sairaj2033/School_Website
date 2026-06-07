@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const noticeSchema = new mongoose.Schema(
+const resourceSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -8,24 +8,23 @@ const noticeSchema = new mongoose.Schema(
       trim: true,
       maxlength: 200,
     },
-    category: {
+    subject: {
       type: String,
-      required: true,
-    },
-    content: {
-      type: String,
-      required: true,
-    },
-    message: {
-      type: String,
-      required: [true, 'Message is required'],
+      required: [true, 'Subject is required'],
       trim: true,
     },
-    targetClass: {
+    fileUrl: {
       type: String,
-      default: 'All',
+      required: true,
     },
-    postedBy: {
+    fileName: {
+      type: String,
+      required: true,
+    },
+    fileType: {
+      type: String,
+    },
+    uploadedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
@@ -33,12 +32,12 @@ const noticeSchema = new mongoose.Schema(
     teacherName: {
       type: String,
     },
-    date: {
-      type: Date,
-      default: Date.now,
+    targetClass: {
+      type: String,
+      default: 'All Classes',
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Notice', noticeSchema);
+module.exports = mongoose.model('Resource', resourceSchema);
