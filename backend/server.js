@@ -5,10 +5,11 @@ const mongoose = require("mongoose");
 const path = require("path");
 
 const authRoutes = require("./routes/Auth");
-const inquiryRoutes = require('./routes/inquiryRoutes.js');
+const inquiryRoutes = require("./routes/inquiryRoutes.js");
+const noticeRoutes = require("./routes/noticeRoutes.js");
 const applicationRoutes = require("./routes/applicationRoutes");
-const contactRoutes = require('./routes/contactRoutes.js');
-const teacherRoutes = require('./routes/teacherRoutes');
+const contactRoutes = require("./routes/contactRoutes.js");
+const teacherRoutes = require("./routes/teacherRoutes.js");
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -17,6 +18,7 @@ app.use(express.json());
 // routes
 app.use("/api/auth", authRoutes);
 app.use("/api/inquiries", inquiryRoutes);
+app.use("/api/notices", noticeRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/teacher", teacherRoutes);

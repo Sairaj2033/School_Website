@@ -1,10 +1,10 @@
-
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
 const Register = () => {
+  const { role } = useParams();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,7 +13,7 @@ const Register = () => {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // ✅ Password toggle state
+  const [showPassword, setShowPassword] = useState(false);
 
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -27,8 +27,8 @@ const Register = () => {
     setLoading(true);
 
     try {
-      await register(formData.name, formData.email, formData.password);
-      navigate("/home");
+      await register(formData.name, formData.email, formData.password, role || "student");
+      navigate(role ? `/login/${role}` : "/login");
     } catch (err) {
       console.error("Register Error:", err);
 
@@ -45,8 +45,8 @@ const Register = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
 
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Create Account
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8 capitalize">
+          {role ? `Register as ${role}` : "Create Account"}
         </h2>
 
         {/* Error */}
@@ -97,7 +97,7 @@ const Register = () => {
             <label className="block text-sm font-medium text-gray-700">
               Password
             </label>
-            <div className="relative">
+            <div className="relative mt-1">
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -105,7 +105,7 @@ const Register = () => {
                 value={formData.password}
                 onChange={onChange}
                 required
-                className="mt-1 block w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                className="block w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                 placeholder="••••••••"
               />
               <button
@@ -117,6 +117,9 @@ const Register = () => {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Password must be at least 6 characters
+            </p>
           </div>
 
           {/* Button */}
@@ -134,7 +137,7 @@ const Register = () => {
           <p className="text-sm text-gray-600">
             Already have an account?{" "}
             <Link
-              to="/login"
+              to={role ? `/login/${role}` : "/login"}
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               Sign in

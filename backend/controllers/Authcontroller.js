@@ -6,7 +6,7 @@ const nodemailer = require("nodemailer");
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ message: "User already exists" });
@@ -29,6 +29,7 @@ exports.register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      role: role || "student",
       isVerified: false,
     });
 

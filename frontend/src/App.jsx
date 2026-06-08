@@ -23,10 +23,11 @@ import EventCalendar from "./pages/EventCalendar";
 import Scholarship from "./pages/Scholarship";
 import Gallery from "./pages/Gallery";
 import Student from "./pages/Student";
-import DownloadProspectus from "./pages/DownloadProspectus";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-
+import DownloadProspectus from "./pages/DownloadProspectus";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 import { AuthProvider } from "./context/AuthContext";
 
@@ -40,7 +41,7 @@ const ScrollToTop = () => {
   return null;
 };
 
-
+// ✅ Protected Route - ONLY logged in users can access
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   
@@ -51,7 +52,7 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-
+// ✅ Public Route - Only for non-logged in users (Login/Register)
 const PublicRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   
@@ -73,15 +74,20 @@ const App = () => {
 
           <main className="grow">
             <Routes>
-              
+              {/* Default route - protected home */}
               <Route path="/" element={
                 <ProtectedRoute>
                   <Home />
                 </ProtectedRoute>
               } />
               
-              
+              {/* Auth Routes - Public (only for non-logged in users) */}
               <Route path="/login" element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              } />
+              <Route path="/login/:role" element={
                 <PublicRoute>
                   <Login />
                 </PublicRoute>
@@ -91,8 +97,23 @@ const App = () => {
                   <Register />
                 </PublicRoute>
               } />
+              <Route path="/register/:role" element={
+                <PublicRoute>
+                  <Register />
+                </PublicRoute>
+              } />
+              <Route path="/forgot-password" element={
+                <PublicRoute>
+                  <ForgotPassword />
+                </PublicRoute>
+              } />
+              <Route path="/reset-password" element={
+                <PublicRoute>
+                  <ResetPassword />
+                </PublicRoute>
+              } />
               
-             
+              {/* Protected Routes (Need Login) */}
               <Route path="/home" element={
                 <ProtectedRoute>
                   <Home />
@@ -159,7 +180,7 @@ const App = () => {
                 </ProtectedRoute>
               } />
 
-              
+              {/* Catch-all route for 404 Page Not Found */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

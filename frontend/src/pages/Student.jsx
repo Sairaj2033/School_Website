@@ -1,5 +1,12 @@
-import React from "react";
-import { BookOpen, ClipboardCheck, Download, Bell, User } from "lucide-react";
+import React, { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import {
+  BookOpen,
+  ClipboardCheck,
+  Download,
+  Bell,
+  User,
+} from "lucide-react";
 
 import physicsNotes from "../assets/prospectus/physics-notes.pdf";
 import chemistryLab from "../assets/prospectus/chemistry-lab.pdf";
@@ -7,17 +14,19 @@ import mathFormulas from "../assets/prospectus/math-formulas.pdf";
 import attendanceData from "../data/attendance";
 
 const Student = () => {
-  // ✅ Fix: Pehle localStorage se data read karo
+  const { user } = useContext(AuthContext);
+  const displayName = user?.user?.name || user?.name || "Deepali";
+
   const savedAttendance = JSON.parse(localStorage.getItem("attendanceRecords"));
 
-  // ✅ Fix: presentClasses aur totalClasses ko pehle calculate karo
+  // Calculate attendance data with proper fallbacks
   const presentClasses = savedAttendance
     ? Object.values(savedAttendance).filter((status) => status === "Present").length
-    : 0;  // Agar data nahi hai to 0
+    : 0;
 
   const totalClasses = savedAttendance
     ? Object.keys(savedAttendance).length
-    : 0;  // Agar data nahi hai to 0
+    : 0;
 
   const attendancePercentage = totalClasses > 0 
     ? ((presentClasses / totalClasses) * 100).toFixed(0)
@@ -106,7 +115,7 @@ const Student = () => {
 
           <div>
             <h1 className="text-2xl sm:text-4xl font-bold">
-              Welcome Back, Deepali 👋
+              Welcome Back, {displayName} 👋
             </h1>
 
             <p className="text-blue-100 mt-2 text-lg">

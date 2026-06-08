@@ -1,14 +1,14 @@
-
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
+  const { role } = useParams();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // ✅ Password toggle state
+  const [showPassword, setShowPassword] = useState(false);
 
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -22,8 +22,14 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(formData.email, formData.password);
-      navigate("/home");
+      const data = await login(formData.email, formData.password);
+      const userRole = data?.user?.role || "student";
+      
+      if (userRole === "teacher") {
+        navigate("/teacher");
+      } else {
+        navigate("/student");
+      }
     } catch (err) {
       console.error("Login Error:", err);
 
@@ -40,8 +46,8 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
         
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Welcome Back
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8 capitalize">
+          {role ? `Sign In as ${role}` : "Welcome Back"}
         </h2>
 
         {/* Error Message */}
@@ -122,7 +128,7 @@ const Login = () => {
           <p className="text-sm text-gray-600">
             Don't have an account?{" "}
             <Link
-              to="/register"
+              to={role ? `/register/${role}` : "/register"}
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               Sign up

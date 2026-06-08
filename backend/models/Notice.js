@@ -8,6 +8,14 @@ const noticeSchema = new mongoose.Schema(
       trim: true,
       maxlength: 200,
     },
+    category: {
+      type: String,
+      required: true,
+    },
+    content: {
+      type: String,
+      required: true,
+    },
     message: {
       type: String,
       required: [true, 'Message is required'],
@@ -24,6 +32,10 @@ const noticeSchema = new mongoose.Schema(
     },
     teacherName: {
       type: String,
+    },
+    date: {
+      type: Date,
+      default: Date.now,
     },
   },
   { timestamps: true }
