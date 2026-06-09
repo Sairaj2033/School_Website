@@ -55,7 +55,7 @@ const Navbar = () => {
                 <span className="text-xl font-bold text-white tracking-tight">
                   EduStream
                 </span>
-              </NavLink>
+              </Link>
             </div>
 
             {/* Desktop Links - WITH SMOOTH UNDERLINE TRANSITION */}
@@ -91,20 +91,6 @@ const Navbar = () => {
                         strokeWidth="2"
                         d="M19 9l-7 7-7-7"
 
-                <NavLink key={link.name} to={link.path}>
-                  {({ isActive }) => (
-                    <div className="relative pb-1 group">
-                      <span
-                        className={`font-medium transition-colors duration-300 ${
-                          isActive ? "text-white" : "text-blue-50 group-hover:text-white"
-                        }`}
-                      >
-                        {link.name}
-                      </span>
-                      <span
-                        className={`absolute bottom-0 left-0 w-full h-0.5 bg-white transition-transform duration-300 ease-out ${
-                          isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                        }`}
                       />
                     </svg>
                   </div>

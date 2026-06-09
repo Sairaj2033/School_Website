@@ -96,9 +96,6 @@ const EventCalendar = () => {
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {selectedDateEvents.length > 0 ? (
           selectedDateEvents.map((event) => (
-      {selectedDateEvents.length > 0 ? (
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {selectedDateEvents.map((event) => (
             <div
               key={event.id}
               className="bg-[var(--card-bg)] rounded-3xl shadow-xl p-6 hover:scale-105 transition-all duration-300 border border-gray-100"
@@ -129,17 +126,6 @@ const EventCalendar = () => {
           </div>
         )}  
       </div>
-    </div >
-  )
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-10">
-          <p className="text-gray-500 text-lg">
-            No events scheduled for this date.
-          </p>
-        </div>
-      )}
     </div>
   );
 };
