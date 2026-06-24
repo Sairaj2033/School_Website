@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import {
-  HashRouter as Router,
+  BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
@@ -28,8 +28,13 @@ import Register from "./pages/Register";
 import DownloadProspectus from "./pages/DownloadProspectus";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import VerifyEmail from "./pages/VerifyEmail";
+import ResendVerification from "./pages/ResendVerification";
+import VerifyEmailSent from "./pages/VerifyEmailSent";
 
-import { AuthProvider } from "./context/AuthContext";
+import { AuthContext } from "./context/AuthContext";
+import RoleProtectedRoute from "./components/RoleProtectedRoute";
+import TeacherDashboard from "./pages/TeacherDashboard";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -41,33 +46,36 @@ const ScrollToTop = () => {
   return null;
 };
 
-// ✅ Protected Route - ONLY logged in users can access
+//  Protected Route - ONLY logged in users can access
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  
-  if (!token) {
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) return null;
+
+  if (!user) {
     return <Navigate to="/register" replace />;
   }
-  
+
   return children;
 };
 
-// ✅ Public Route - Only for non-logged in users (Login/Register)
+// Public Route - Only for non-logged in users (Login/Register)
 const PublicRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  
-  if (token) {
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) return null;
+
+  if (user) {
     return <Navigate to="/home" replace />;
   }
-  
+
   return children;
 };
 
 const App = () => {
   return (
-    <AuthProvider>
-      <Router>
-        <ScrollToTop />
+    <Router>
+      <ScrollToTop />
 
         <div className="flex flex-col min-h-screen">
           <Navbar />
@@ -107,11 +115,14 @@ const App = () => {
                   <ForgotPassword />
                 </PublicRoute>
               } />
-              <Route path="/reset-password" element={
+              <Route path="/reset-password/:token" element={
                 <PublicRoute>
                   <ResetPassword />
                 </PublicRoute>
               } />
+              <Route path="/verify-email/:token" element={<VerifyEmail />} />
+              <Route path="/resend-verification" element={<ResendVerification />} />
+              <Route path="/verify-email-sent" element={<VerifyEmailSent />} />
               
               {/* Protected Routes (Need Login) */}
               <Route path="/home" element={
@@ -127,9 +138,15 @@ const App = () => {
               } />
               
               <Route path="/teacher" element={
-                <ProtectedRoute>
+                <RoleProtectedRoute allowedRoles={["teacher", "admin"]}>
                   <Teacher />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
+              } />
+
+              <Route path="/teacher/dashboard" element={
+                <RoleProtectedRoute allowedRoles={["teacher", "admin"]}>
+                  <TeacherDashboard />
+                </RoleProtectedRoute>
               } />
               
               <Route path="/academics" element={
@@ -175,9 +192,9 @@ const App = () => {
               } />
               
               <Route path="/student" element={
-                <ProtectedRoute>
+                <RoleProtectedRoute allowedRoles={["student"]}>
                   <Student />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
               } />
 
               {/* Catch-all route for 404 Page Not Found */}
@@ -188,7 +205,6 @@ const App = () => {
           <Footer />
         </div>
       </Router>
-    </AuthProvider>
   );
 };
 

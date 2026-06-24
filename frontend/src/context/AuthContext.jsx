@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
       console.error("Failed to load user from localStorage:", error);
 
       localStorage.removeItem("userInfo");
-      localStorage.removeItem("token");
     } finally {
       setLoading(false);
     }
@@ -33,10 +32,12 @@ export const AuthProvider = ({ children }) => {
         password,
       });
 
-      setUser(data);
+      setUser(data.user);
 
-      localStorage.setItem("userInfo", JSON.stringify(data));
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("userInfo", JSON.stringify(data.user));
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
 
       return data;
     } catch (error) {
@@ -54,7 +55,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Register Function - Supports both with and without role
+  // Register Function - account remains unauthenticated until email verification
   const register = async (name, email, password, role = "student") => {
     try {
       const { data } = await api.post("/auth/register", {
@@ -63,13 +64,6 @@ export const AuthProvider = ({ children }) => {
         password,
         role,
       });
-
-      // Save token and user after registration
-      if (data.token) {
-        setUser(data);
-        localStorage.setItem("userInfo", JSON.stringify(data));
-        localStorage.setItem("token", data.token);
-      }
 
       return data;
     } catch (error) {
@@ -84,8 +78,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Logout Function
-  const logout = () => {
+  const logout = async () => {
     try {
+      await api.post("/auth/logout");
       setUser(null);
 
       localStorage.removeItem("userInfo");
