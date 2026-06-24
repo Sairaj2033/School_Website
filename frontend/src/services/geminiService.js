@@ -17,10 +17,17 @@ export const getAIResponse = async (userPrompt) => {
 
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
-      systemInstruction:
-        "You are the EduStream Academy AI Assistant. Provide helpful, concise information about the school, admissions, academics, and teachers. Be professional and encouraging. If you don't know an answer, suggest contacting office@edustream.edu. Do not provide personal opinions or unrelated information. Keep responses clear and focused on the user's query. Avoid unnecessary repetition and ensure the information is accurate and relevant.",
+      systemInstruction: [
+        "You are the EduStream Academy AI Assistant.",
+        "Provide helpful, concise information about the school, admissions, academics, and teachers.",
+        "Be professional and encouraging.",
+        "If you don't know an answer, suggest contacting office@edustream.edu.",
+        "Do not provide personal opinions or unrelated information.",
+        "Keep responses clear and focused on the user's query.",
+        "Avoid unnecessary repetition and ensure the information is accurate and relevant.",
+      ].join(" "),
     });
-
+    
     const result = await model.generateContent(userPrompt);
 
     const responseText =
