@@ -10,6 +10,7 @@ import {
 // Import Components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import EduStreamAssistant from "./components/EduStreamAssistant";
 
 // Import Pages
 import Home from "./pages/Home";
@@ -77,134 +78,136 @@ const App = () => {
     <Router>
       <ScrollToTop />
 
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
 
-          <main className="grow">
-            <Routes>
-              {/* Default route - protected home */}
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              } />
-              
-              {/* Auth Routes - Public (only for non-logged in users) */}
-              <Route path="/login" element={
-                <PublicRoute>
-                  <Login />
-                </PublicRoute>
-              } />
-              <Route path="/login/:role" element={
-                <PublicRoute>
-                  <Login />
-                </PublicRoute>
-              } />
-              <Route path="/register" element={
-                <PublicRoute>
-                  <Register />
-                </PublicRoute>
-              } />
-              <Route path="/register/:role" element={
-                <PublicRoute>
-                  <Register />
-                </PublicRoute>
-              } />
-              <Route path="/forgot-password" element={
-                <PublicRoute>
-                  <ForgotPassword />
-                </PublicRoute>
-              } />
-              <Route path="/reset-password/:token" element={
-                <PublicRoute>
-                  <ResetPassword />
-                </PublicRoute>
-              } />
-              <Route path="/verify-email/:token" element={<VerifyEmail />} />
-              <Route path="/resend-verification" element={<ResendVerification />} />
-              <Route path="/verify-email-sent" element={<VerifyEmailSent />} />
-              
-              {/* Protected Routes (Need Login) */}
-              <Route path="/home" element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/about" element={
-                <ProtectedRoute>
-                  <About />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/teacher" element={
-                <RoleProtectedRoute allowedRoles={["teacher", "admin"]}>
-                  <Teacher />
-                </RoleProtectedRoute>
-              } />
+        <main className="grow">
+          <Routes>
+            {/* Default route - protected home */}
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            } />
 
-              <Route path="/teacher/dashboard" element={
-                <RoleProtectedRoute allowedRoles={["teacher", "admin"]}>
-                  <TeacherDashboard />
-                </RoleProtectedRoute>
-              } />
-              
-              <Route path="/academics" element={
-                <ProtectedRoute>
-                  <Academics />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/admissions" element={
-                <ProtectedRoute>
-                  <Admissions />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/gallery" element={
-                <ProtectedRoute>
-                  <Gallery />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/contact" element={
-                <ProtectedRoute>
-                  <Contact />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/calendar" element={
-                <ProtectedRoute>
-                  <EventCalendar />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/admissions/scholarship" element={
-                <ProtectedRoute>
-                  <Scholarship />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/prospectus" element={
-                <ProtectedRoute>
-                  <DownloadProspectus />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/student" element={
-                <RoleProtectedRoute allowedRoles={["student"]}>
-                  <Student />
-                </RoleProtectedRoute>
-              } />
+            {/* Auth Routes - Public (only for non-logged in users) */}
+            <Route path="/login" element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            } />
+            <Route path="/login/:role" element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            } />
+            <Route path="/register" element={
+              <PublicRoute>
+                <Register />
+              </PublicRoute>
+            } />
+            <Route path="/register/:role" element={
+              <PublicRoute>
+                <Register />
+              </PublicRoute>
+            } />
+            <Route path="/forgot-password" element={
+              <PublicRoute>
+                <ForgotPassword />
+              </PublicRoute>
+            } />
+            <Route path="/reset-password/:token" element={
+              <PublicRoute>
+                <ResetPassword />
+              </PublicRoute>
+            } />
+            <Route path="/verify-email/:token" element={<VerifyEmail />} />
+            <Route path="/resend-verification" element={<ResendVerification />} />
+            <Route path="/verify-email-sent" element={<VerifyEmailSent />} />
 
-              {/* Catch-all route for 404 Page Not Found */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </main>
+            {/* Protected Routes (Need Login) */}
+            <Route path="/home" element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            } />
 
-          <Footer />
-        </div>
-      </Router>
+            <Route path="/about" element={
+              <ProtectedRoute>
+                <About />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/teacher" element={
+              <RoleProtectedRoute allowedRoles={["teacher", "admin"]}>
+                <Teacher />
+              </RoleProtectedRoute>
+            } />
+
+            <Route path="/teacher/dashboard" element={
+              <RoleProtectedRoute allowedRoles={["teacher", "admin"]}>
+                <TeacherDashboard />
+              </RoleProtectedRoute>
+            } />
+
+            <Route path="/academics" element={
+              <ProtectedRoute>
+                <Academics />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/admissions" element={
+              <ProtectedRoute>
+                <Admissions />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/gallery" element={
+              <ProtectedRoute>
+                <Gallery />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/contact" element={
+              <ProtectedRoute>
+                <Contact />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/calendar" element={
+              <ProtectedRoute>
+                <EventCalendar />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/admissions/scholarship" element={
+              <ProtectedRoute>
+                <Scholarship />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/prospectus" element={
+              <ProtectedRoute>
+                <DownloadProspectus />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/student" element={
+              <RoleProtectedRoute allowedRoles={["student"]}>
+                <Student />
+              </RoleProtectedRoute>
+            } />
+
+            {/* Catch-all route for 404 Page Not Found */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+
+        <Footer />
+      </div>
+
+      <EduStreamAssistant />
+    </Router>
   );
 };
 
