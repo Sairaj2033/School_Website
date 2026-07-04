@@ -15,12 +15,7 @@ checkProductionSecurity();
 
 // Import routes
 const authRoutes = require("./routes/Auth");
-const inquiryRoutes = require("./routes/inquiryRoutes.js");
-const noticeRoutes = require("./routes/noticeRoutes.js");
-const applicationRoutes = require("./routes/applicationRoutes");
-const contactRoutes = require("./routes/contactRoutes.js");
-const teacherRoutes = require("./routes/teacherRoutes.js");
-const chatRoutes = require("./routes/chatRoutes.js")
+const inquiryRoutes = require('./routes/inquiryRoutes.js');
 
 dotenv.config();
 
@@ -78,13 +73,9 @@ app.get("/api/health", (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-// Start server
-const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 }).on("error", (err) => {
   console.log("Server error:", err.message);
   process.exit(1);
