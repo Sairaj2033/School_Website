@@ -20,6 +20,9 @@ const noticeRoutes = require("./routes/noticeRoutes.js");
 const applicationRoutes = require("./routes/applicationRoutes");
 const contactRoutes = require("./routes/contactRoutes.js");
 const teacherRoutes = require("./routes/teacherRoutes.js");
+const chatRoutes = require("./routes/chatRoutes.js")
+
+dotenv.config();
 
 const app = express();
 
@@ -41,6 +44,9 @@ app.use("/api/notices", noticeRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/teacher", teacherRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api", chatRoutes);
+
 
 // Database connection
 async function connectDB() {
@@ -62,6 +68,18 @@ async function connectDB() {
 
 connectDB();
 
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Server is running",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`✅ Server running on http://localhost:${PORT}`);
 // Start server
 const PORT = process.env.PORT || 5000;
 
