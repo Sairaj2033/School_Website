@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, Link, useParams } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, CheckCircle, Circle } from "lucide-react";
 
 const Register = () => {
   const { role } = useParams();
@@ -15,7 +15,13 @@ const Register = () => {
   const [formErrors, setFormErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
+  const passwordChecks = {
+    length: formData.password.length >= 8,
+    uppercase: /[A-Z]/.test(formData.password),
+    lowercase: /[a-z]/.test(formData.password),
+    number: /\d/.test(formData.password),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(formData.password),
+  };
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -152,9 +158,88 @@ const Register = () => {
             {formErrors.password && (
               <p className="text-xs text-red-600 mt-1">{formErrors.password}</p>
             )}
-            <p className="text-xs text-gray-500 mt-1">
-              Password must be at least 6 characters
-            </p>
+            {formData.password && (
+              <div className="mt-2 space-y-1">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Password requirements:
+                </p>
+                <div className="flex items-center gap-1.5">
+                  {passwordChecks.length ? (
+                    <CheckCircle size={16} className="text-green-600" />
+                  ) : (
+                    <Circle size={16} className="text-gray-400" />
+                  )}
+
+                  <span
+                    className={`${passwordChecks.length ? "text-green-700" : "text-gray-600"
+                      } text-sm`}
+                  >
+                    At least 8 characters
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  {passwordChecks.uppercase ? (
+                    <CheckCircle size={16} className="text-green-600" />
+                  ) : (
+                    <Circle size={16} className="text-gray-400" />
+                  )}
+
+                  <span
+                    className={`${passwordChecks.uppercase ? "text-green-700" : "text-gray-600"
+                      } text-sm`}
+                  >
+                    One uppercase letter
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  {passwordChecks.lowercase ? (
+                    <CheckCircle size={16} className="text-green-600" />
+                  ) : (
+                    <Circle size={16} className="text-gray-400" />
+                  )}
+
+                  <span
+                    className={`${passwordChecks.lowercase ? "text-green-700" : "text-gray-600"
+                      } text-sm`}
+                  >
+                    One lowercase letter
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  {passwordChecks.number ? (
+                    <CheckCircle size={16} className="text-green-600" />
+                  ) : (
+                    <Circle size={16} className="text-gray-400" />
+                  )}
+
+                  <span
+                    className={`${passwordChecks.number ? "text-green-700" : "text-gray-600"
+                      } text-sm`}
+                  >
+                    One number
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  {passwordChecks.special ? (
+                    <CheckCircle size={16} className="text-green-600" />
+                  ) : (
+                    <Circle size={16} className="text-gray-400" />
+                  )}
+
+                  <span
+                    className={`${passwordChecks.special ? "text-green-700" : "text-gray-600"
+                      } text-sm`}
+                  >
+                    One special character
+                  </span>
+                </div>
+
+              </div>
+            )}
           </div>
 
           {/* Button */}

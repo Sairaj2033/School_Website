@@ -17,18 +17,36 @@ const getDaysLeft = (eventDate) => {
   return Math.ceil(difference / (1000 * 60 * 60 * 24));
 };
 
+const formatDateForComparison = (date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0",
+  )}-${String(date.getDate()).padStart(2, "0")}`;
+
 const EventCalendar = () => {
   const [date, setDate] = useState(new Date());
   const [currentRole, setCurrentRole] = useState("student");
 
   const filteredEvents = events.filter((event) => event.role === currentRole);
-  const selectedDate = date.toISOString().split("T")[0];
+
+  const selectedDate = formatDateForComparison(date);
 
   const selectedDateEvents = filteredEvents.filter(
     (event) => event.date === selectedDate,
   );
 
-  const upcomingEvent = filteredEvents.find((event) => getDaysLeft(event.date) >= 0);
+  const formattedSelectedDate = date.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
+  const displayRole =
+    currentRole.charAt(0).toUpperCase() + currentRole.slice(1);
+
+  const upcomingEvent = filteredEvents.find(
+    (event) => getDaysLeft(event.date) >= 0,
+  );
 
   const exportPDF = () => {
     const doc = new jsPDF();
@@ -87,6 +105,34 @@ const EventCalendar = () => {
         </p>
       </div>
 
+      {/* Current View Summary */}
+      <div className="w-full max-w-4xl mx-auto bg-white border border-blue-100 rounded-3xl shadow-xl p-6 mb-12">
+        <h2 className="text-2xl font-bold text-blue-700 mb-4">
+          Current View
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
+          <p>
+            <span className="font-semibold">Selected Role:</span> {displayRole}
+          </p>
+
+          <p>
+            <span className="font-semibold">Selected Date:</span>{" "}
+            {formattedSelectedDate}
+          </p>
+
+          <p>
+            <span className="font-semibold">Events on Selected Date:</span>{" "}
+            {selectedDateEvents.length}
+          </p>
+
+          <p>
+            <span className="font-semibold">Total Events for Role:</span>{" "}
+            {filteredEvents.length}
+          </p>
+        </div>
+      </div>
+
       {upcomingEvent && (
         <div className="max-w-4xl mx-auto mb-12 sm:mb-16">
           <div className="bg-gradient-to-r from-yellow-100 to-orange-100 border-l-4 border-yellow-500 p-6 rounded-2xl shadow-lg">
@@ -113,10 +159,10 @@ const EventCalendar = () => {
       </div>
 
       <h2 className="text-2xl font-semibold mb-6 text-gray-700">
-        Events on {selectedDate}
+        Events on {formattedSelectedDate}
       </h2>
 
-      {/* Event Cards - Fixed Section */}
+      {/* Event Cards */}
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {selectedDateEvents.length > 0 ? (
           selectedDateEvents.map((event) => (
@@ -133,7 +179,9 @@ const EventCalendar = () => {
                   {event.role}
                 </span>
               </div>
+
               <p className="text-gray-500 mb-3 text-lg">📅 {event.date}</p>
+
               <p className="text-gray-700 leading-relaxed">
                 {event.description}
               </p>
@@ -142,7 +190,7 @@ const EventCalendar = () => {
         ) : (
           <div className="col-span-full text-center py-10">
             <p className="text-gray-500 text-lg">
-              No events scheduled for this date.
+              No events found for {displayRole} on {formattedSelectedDate}.
             </p>
           </div>
         )}
