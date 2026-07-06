@@ -4,37 +4,37 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
 
-// ===== Account Lockout System (in-memory fallback) =====
-const failedAttempts = new Map();
+// ===== NEW: Account Lockout System =====
+const failedAttempts = new Map(); // Store failed login attempts
 
-// ===== Email Cooldown System (in-memory fallback) =====
-const emailCooldown = new Map();
+// ===== NEW: Email Cooldown System =====
+const emailCooldown = new Map(); // Store email resend timestamps
 
 const normalizeEmail = (email) => {
   return email?.trim().toLowerCase();
 };
 
-// ===== Password Validation Function =====
+// ===== NEW: Password Validation Function =====
 const validatePassword = (password) => {
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   return regex.test(password);
 };
 
-// ===== Account Lockout Check (fallback) =====
+// ===== NEW: Account Lockout Check Function =====
 const checkAccountLockout = (email) => {
   const attempts = failedAttempts.get(email);
   if (attempts && attempts.count >= 5) {
     const lockoutTime = attempts.lockoutTime || 0;
     if (Date.now() - lockoutTime < 15 * 60 * 1000) {
-      return true;
+      return true; // Account is locked
     } else {
-      failedAttempts.delete(email);
+      failedAttempts.delete(email); // Reset after lockout period
     }
   }
   return false;
 };
 
-// ===== Record Failed Attempt (fallback) =====
+// ===== NEW: Record Failed Attempt =====
 const recordFailedAttempt = (email) => {
   const attempts = failedAttempts.get(email) || { count: 0 };
   attempts.count += 1;
@@ -44,11 +44,11 @@ const recordFailedAttempt = (email) => {
   failedAttempts.set(email, attempts);
 };
 
-// ===== Email Cooldown Check (fallback) =====
+// ===== NEW: Email Cooldown Check =====
 const checkEmailCooldown = (email) => {
   const lastSent = emailCooldown.get(email);
   if (lastSent && Date.now() - lastSent < 5 * 60 * 1000) {
-    return true;
+    return true; // Cooldown active (5 minutes)
   }
   emailCooldown.set(email, Date.now());
   return false;
@@ -63,7 +63,7 @@ exports.register = async (req, res) => {
 
     const normalizedEmail = normalizeEmail(email);
 
-    // ===== Input Sanitization (XSS Protection) =====
+    // ===== NEW: Input Sanitization (XSS Protection) =====
     const sanitizedName = name?.trim().replace(/[<>]/g, '');
     if (!sanitizedName || sanitizedName.length < 2) {
       return res.status(400).json({ message: "Valid name is required (minimum 2 characters)" });
@@ -79,7 +79,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: "Invalid email format" });
     }
 
-    // ===== MODIFIED: Password Strength Validation =====
+    // ===== MODIFIED: Password Strength Validation (8+ chars with complexity) =====
     if (!validatePassword(password)) {
       return res.status(400).json({
         message: "Password must be at least 8 characters and contain at least one uppercase, one lowercase, one number, and one special character (@$!%*?&)"
@@ -96,7 +96,7 @@ exports.register = async (req, res) => {
     const userRole = ["student", "teacher"].includes(role) ? role : "student";
 
     user = await User.create({
-      name: sanitizedName,
+      name: sanitizedName, // ===== MODIFIED: Sanitized name =====
       email: normalizedEmail,
       password: hashedPassword,
       role: userRole,
@@ -156,7 +156,7 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
     const normalizedEmail = normalizeEmail(email);
 
-    // ===== Check in-memory lockout =====
+    // ===== NEW: Check Account Lockout =====
     if (checkAccountLockout(normalizedEmail)) {
       return res.status(403).json({
         message: "Account is temporarily locked. Please try again after 15 minutes."
@@ -167,46 +167,20 @@ exports.login = async (req, res) => {
       email: normalizedEmail
     });
     if (!user) {
+      // ===== NEW: Record failed attempt =====
       recordFailedAttempt(normalizedEmail);
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // ===== NEW: Check if account is active =====
-    if (user.isActive === false) {
-      return res.status(403).json({
-        message: "Account is deactivated. Please contact support."
-      });
-    }
-
-    // ===== NEW: Check model-based lockout =====
-    if (user.isAccountLocked && user.isAccountLocked()) {
-      const minutesLeft = Math.ceil((user.lockoutUntil - new Date()) / 60000);
-      return res.status(403).json({
-        message: `Account is locked. Please try again after ${minutesLeft} minutes.`
-      });
-    }
-
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      // ===== NEW: Use model method =====
-      if (user.incrementFailedAttempts) {
-        await user.incrementFailedAttempts();
-      } else {
-        recordFailedAttempt(normalizedEmail);
-      }
+      // ===== NEW: Record failed attempt =====
+      recordFailedAttempt(normalizedEmail);
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // ===== NEW: Reset failed attempts =====
-    if (user.resetFailedAttempts) {
-      await user.resetFailedAttempts();
-    }
+    // ===== NEW: Reset failed attempts on successful login =====
     failedAttempts.delete(normalizedEmail);
-
-    // ===== NEW: Update last login =====
-    if (user.updateLastLogin) {
-      await user.updateLastLogin();
-    }
 
     if (!user.isVerified) {
       return res.status(403).json({
@@ -215,19 +189,21 @@ exports.login = async (req, res) => {
       });
     }
 
-    // ===== Generate Tokens =====
+    // ===== MODIFIED: Generate Access Token (shorter expiry) =====
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "15m" }
     );
 
+    // ===== NEW: Generate Refresh Token =====
     const refreshToken = jwt.sign(
       { id: user._id, email: user.email },
       process.env.REFRESH_TOKEN_SECRET || "your_refresh_secret_key",
       { expiresIn: "7d" }
     );
 
+    // ===== NEW: Save refresh token to user =====
     user.refreshToken = refreshToken;
     await user.save();
 
@@ -236,13 +212,14 @@ exports.login = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 900000,
+        maxAge: 900000, // 15 minutes
       })
+      // ===== NEW: Refresh token cookie =====
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(200)
       .json({
@@ -254,7 +231,6 @@ exports.login = async (req, res) => {
           name: user.name,
           email: user.email,
           role: user.role,
-          lastLoginAt: user.lastLoginAt,
         },
       });
   } catch (error) {
@@ -267,6 +243,7 @@ exports.login = async (req, res) => {
 // ============================================
 exports.logout = async (req, res) => {
   try {
+    // ===== NEW: Clear refresh token from database =====
     const token = req.cookies?.token;
     if (token) {
       try {
@@ -275,7 +252,7 @@ exports.logout = async (req, res) => {
           await User.findByIdAndUpdate(decoded.id, { refreshToken: null });
         }
       } catch (err) {
-        // Token invalid, continue
+        // Token invalid, continue with logout
       }
     }
 
@@ -309,6 +286,7 @@ exports.forgotPassword = async (req, res) => {
       email: normalizedEmail
     });
 
+    // Return same message regardless of whether email exists (prevents enumeration)
     if (!user) {
       return res
         .status(200)
@@ -369,6 +347,7 @@ exports.resetPassword = async (req, res) => {
         .json({ message: "Token and new password are required." });
     }
 
+    // ===== MODIFIED: Use password validation =====
     if (!validatePassword(password)) {
       return res.status(400).json({
         message: "Password must be at least 8 characters and contain at least one uppercase, one lowercase, one number, and one special character (@$!%*?&)"
@@ -395,6 +374,7 @@ exports.resetPassword = async (req, res) => {
     user.password = await bcrypt.hash(password, salt);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
+    // ===== NEW: Clear refresh token on password reset =====
     user.refreshToken = null;
     await user.save();
 
@@ -450,7 +430,7 @@ exports.resendVerification = async (req, res) => {
 
     const normalizedEmail = normalizeEmail(email);
 
-    // ===== Check in-memory cooldown =====
+    // ===== NEW: Check Email Cooldown =====
     if (checkEmailCooldown(normalizedEmail)) {
       return res.status(429).json({
         message: "Please wait 5 minutes before requesting another verification email."
@@ -468,13 +448,6 @@ exports.resendVerification = async (req, res) => {
       return res.status(400).json({ message: "Email is already verified" });
     }
 
-    // ===== Use model method if available =====
-    if (user.canResendVerificationEmail && !user.canResendVerificationEmail()) {
-      return res.status(429).json({
-        message: "Please wait 5 minutes before requesting another verification email."
-      });
-    }
-
     const rawToken = crypto.randomBytes(32).toString("hex");
     const hashedToken = crypto
       .createHash("sha256")
@@ -483,10 +456,6 @@ exports.resendVerification = async (req, res) => {
 
     user.verificationToken = hashedToken;
     user.verificationTokenExpiry = Date.now() + 24 * 60 * 60 * 1000;
-
-    if (user.updateVerificationEmailSent) {
-      await user.updateVerificationEmailSent();
-    }
     await user.save();
 
     const verifyUrl = `${process.env.CLIENT_URL || process.env.FRONTEND_URL || "http://localhost:5173"
@@ -518,7 +487,7 @@ exports.resendVerification = async (req, res) => {
 };
 
 // ============================================
-// REFRESH TOKEN
+// NEW: REFRESH TOKEN
 // ============================================
 exports.refreshToken = async (req, res) => {
   try {
@@ -542,14 +511,6 @@ exports.refreshToken = async (req, res) => {
       return res.status(403).json({
         success: false,
         message: 'Invalid refresh token'
-      });
-    }
-
-    // ===== Check if account is active =====
-    if (user.isActive === false) {
-      return res.status(403).json({
-        success: false,
-        message: 'Account is deactivated'
       });
     }
 
