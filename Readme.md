@@ -11,14 +11,14 @@
 ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
 
-## ✨ Key Features
+## Key Features
 
 * **📋 Real-Time Notice Board:** Instantly broadcast important announcements, updates, and events across the portal to keep students and faculty aligned.
 * **📚 Resource Sharing:** A centralized hub for uploading, downloading, and organizing study materials, assignments, and lecture notes.
 * **🤖 AI Assistant:** An integrated intelligent chatbot to help users navigate the portal, answer frequent queries, and provide instant support.
 
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 edustream/
