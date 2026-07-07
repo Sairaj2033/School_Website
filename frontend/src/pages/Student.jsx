@@ -7,7 +7,8 @@ import {
   Download,
   Bell,
   User,
-  CheckSquare
+  CheckSquare,
+  FileText
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../utils/axios";
@@ -21,6 +22,39 @@ const Student = () => {
   const { user } = useContext(AuthContext);
   const displayName = getUserRole(user) ? (user?.name || user?.user?.name || "Student") : "Student";
   const [exams, setExams] = React.useState([]);
+  const [isGenerating, setIsGenerating] = React.useState(false);
+
+  const handleDownloadReport = async () => {
+    try {
+      setIsGenerating(true);
+      const studentId = user?.id || user?.user?._id || user?._id;
+      if (!studentId) throw new Error("Student ID not found");
+
+      const response = await api.get(`/reports/student/${studentId}`, {
+        responseType: 'blob', // Important for file downloads
+      });
+
+      // Create blob link to download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Report_Card_${displayName.replace(/\s+/g, '_')}.pdf`);
+      
+      // Append to html link element page
+      document.body.appendChild(link);
+      
+      // Start download
+      link.click();
+      
+      // Clean up and remove the link
+      link.parentNode.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading report:", error);
+      alert("Failed to generate report card. Please try again later.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   React.useEffect(() => {
     const fetchExams = async () => {
@@ -138,6 +172,17 @@ const Student = () => {
             <p className="text-blue-100 mt-2 text-lg">
               Here's your academic dashboard overview.
             </p>
+          </div>
+          
+          <div className="ml-auto">
+            <button 
+              onClick={handleDownloadReport} 
+              disabled={isGenerating}
+              className={`flex items-center gap-2 bg-white text-blue-700 px-6 py-3 rounded-xl font-bold shadow-lg transition duration-300 ${isGenerating ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-50 hover:shadow-xl hover:-translate-y-1'}`}
+            >
+              <FileText size={20} />
+              {isGenerating ? "Generating PDF..." : "Download Report Card"}
+            </button>
           </div>
         </div>
       </div>
