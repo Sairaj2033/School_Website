@@ -25,8 +25,8 @@ const Navbar = () => {
       : []),
   ];
 
-  const handleLogout = () => {
-    logout();  // ✅ This clears context + localStorage
+  const handleLogout = async () => {
+    await logout();  // ✅ Wait for logout to finish before navigating away
     window.location.href = "/register";
   };
 

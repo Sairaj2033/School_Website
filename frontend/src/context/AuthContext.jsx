@@ -80,13 +80,15 @@ export const AuthProvider = ({ children }) => {
   // Logout Function
   const logout = async () => {
     try {
+      // Attempt to notify backend to invalidate cookies/tokens
       await api.post("/auth/logout");
+    } catch (error) {
+      console.error("Backend Logout Error:", error);
+    } finally {
+      // ALWAYS clear local state, even if the backend request fails (e.g., token expired)
       setUser(null);
-
       localStorage.removeItem("userInfo");
       localStorage.removeItem("token");
-    } catch (error) {
-      console.error("Logout Error:", error);
     }
   };
 

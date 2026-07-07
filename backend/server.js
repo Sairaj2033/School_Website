@@ -9,13 +9,22 @@ const cookieParser = require("cookie-parser");
 dotenv.config();
 
 // Import and run environment validator
-const { validateEnv, checkProductionSecurity } = require("./backend/utils/envValidator");
+const { validateEnv, checkProductionSecurity } = require("./utils/envValidator");
 validateEnv();
 checkProductionSecurity();
 
 // Import routes
 const authRoutes = require("./routes/Auth");
 const inquiryRoutes = require('./routes/inquiryRoutes.js');
+const noticeRoutes = require('./routes/noticeRoutes.js');
+const applicationRoutes = require('./routes/ApplicationRoutes.js');
+const contactRoutes = require('./routes/contactRoutes.js');
+const teacherRoutes = require('./routes/teacherRoutes.js');
+const chatRoutes = require('./routes/chatRoutes.js');
+const courseRoutes = require('./routes/courseRoutes.js');
+const examRoutes = require('./routes/examRoutes.js');
+const submissionRoutes = require('./routes/submissionRoutes.js');
+const reportRoutes = require('./routes/reportRoutes.js');
 
 dotenv.config();
 
@@ -41,6 +50,10 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api", chatRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/exams", examRoutes);
+app.use("/api/submissions", submissionRoutes);
+app.use("/api/reports", reportRoutes);
 
 
 // Database connection

@@ -7,7 +7,11 @@ import {
   Download,
   Bell,
   User,
+  CheckSquare,
+  FileText
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import api from "../utils/axios";
 
 import physicsNotes from "../assets/prospectus/physics-notes.pdf";
 import chemistryLab from "../assets/prospectus/chemistry-lab.pdf";
@@ -17,6 +21,52 @@ import attendanceData from "../data/attendance";
 const Student = () => {
   const { user } = useContext(AuthContext);
   const displayName = getUserRole(user) ? (user?.name || user?.user?.name || "Student") : "Student";
+  const [exams, setExams] = React.useState([]);
+  const [isGenerating, setIsGenerating] = React.useState(false);
+
+  const handleDownloadReport = async () => {
+    try {
+      setIsGenerating(true);
+      const studentId = user?.id || user?.user?._id || user?._id;
+      if (!studentId) throw new Error("Student ID not found");
+
+      const response = await api.get(`/reports/student/${studentId}`, {
+        responseType: 'blob', // Important for file downloads
+      });
+
+      // Create blob link to download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Report_Card_${displayName.replace(/\s+/g, '_')}.pdf`);
+      
+      // Append to html link element page
+      document.body.appendChild(link);
+      
+      // Start download
+      link.click();
+      
+      // Clean up and remove the link
+      link.parentNode.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading report:", error);
+      alert("Failed to generate report card. Please try again later.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  React.useEffect(() => {
+    const fetchExams = async () => {
+      try {
+        const res = await api.get('/exams');
+        setExams(res.data.data);
+      } catch (err) {
+        console.error("Error fetching exams:", err);
+      }
+    };
+    fetchExams();
+  }, []);
 
   const savedAttendance = JSON.parse(localStorage.getItem("attendanceRecords"));
 
@@ -122,6 +172,17 @@ const Student = () => {
             <p className="text-blue-100 mt-2 text-lg">
               Here's your academic dashboard overview.
             </p>
+          </div>
+          
+          <div className="ml-auto">
+            <button 
+              onClick={handleDownloadReport} 
+              disabled={isGenerating}
+              className={`flex items-center gap-2 bg-white text-blue-700 px-6 py-3 rounded-xl font-bold shadow-lg transition duration-300 ${isGenerating ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-50 hover:shadow-xl hover:-translate-y-1'}`}
+            >
+              <FileText size={20} />
+              {isGenerating ? "Generating PDF..." : "Download Report Card"}
+            </button>
           </div>
         </div>
       </div>
@@ -269,6 +330,41 @@ const Student = () => {
               </p>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Available Exams */}
+      <div className="bg-white rounded-3xl shadow-2xl p-8 mb-10">
+        <h2 className="text-3xl font-bold text-blue-700 mb-6 flex items-center gap-3">
+          <CheckSquare /> Available Exams
+        </h2>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {exams.length > 0 ? exams.map((exam) => (
+            <div
+              key={exam._id}
+              className="border rounded-2xl p-5 hover:shadow-2xl hover:-translate-y-1 transition duration-300 bg-gradient-to-br from-white to-blue-50 flex flex-col justify-between"
+            >
+              <div>
+                <h3 className="text-2xl font-bold text-gray-800">{exam.title}</h3>
+                <p className="text-gray-500 mt-2 text-lg">Course: {exam.course?.name || "General"}</p>
+                <div className="text-blue-600 mt-3 font-semibold flex gap-4">
+                  <span>⏱ {exam.timeLimit} mins</span>
+                  <span>❓ {exam.questions.length} Questions</span>
+                </div>
+              </div>
+              <Link
+                to={`/student/exam/${exam._id}`}
+                className="mt-6 text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition duration-300 shadow-md"
+              >
+                Take Exam
+              </Link>
+            </div>
+          )) : (
+            <div className="col-span-2 text-center text-gray-500 py-6 text-lg">
+              No exams available right now. Check back later!
+            </div>
+          )}
         </div>
       </div>
 

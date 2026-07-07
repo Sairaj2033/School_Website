@@ -14,7 +14,7 @@ const TEST_USERS = [
 ];
 
 async function seed() {
-  await mongoose.connect(process.env.MONGO_URL);
+  await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URL);
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash("test123", salt);

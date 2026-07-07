@@ -26,12 +26,6 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      validate: {
-        validator: function(v) {
-          return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(v);
-        },
-        message: "Password must be 8+ characters with at least one uppercase, one lowercase, one number, and one special character (@$!%*?&)"
-      }
     },
 
     // ===== NEW: Security Fields =====
@@ -128,7 +122,7 @@ const userSchema = new mongoose.Schema(
 );
 
 // ===== NEW: MongoDB Indexes for Performance =====
-userSchema.index({ email: 1 });
+// userSchema.index({ email: 1 }); // Removed to fix duplicate index warning as unique:true handles this
 userSchema.index({ isActive: 1 });
 userSchema.index({ role: 1 });
 userSchema.index({ createdAt: -1 });
