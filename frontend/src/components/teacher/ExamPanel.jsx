@@ -69,7 +69,12 @@ const ExamPanel = () => {
               <span className={`px-2 py-1 rounded text-xs ${exam.isPublished ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                 {exam.isPublished ? 'Published' : 'Draft'}
               </span>
-              <button className="text-blue-600 text-xs font-medium hover:underline ml-auto">View Submissions</button>
+              <button 
+                onClick={() => navigate(`/teacher/exam/${exam._id}/submissions`)}
+                className="text-blue-600 text-xs font-medium hover:underline ml-auto"
+              >
+                View Submissions
+              </button>
             </div>
           </div>
         )) : (

@@ -38,6 +38,7 @@ import RoleProtectedRoute from "./components/RoleProtectedRoute";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import ExamBuilder from "./pages/ExamBuilder";
 import ExamTakingInterface from "./pages/ExamTakingInterface";
+import SubmissionList from "./pages/SubmissionList";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -155,6 +156,12 @@ const App = () => {
             <Route path="/teacher/courses/:courseId/exam/new" element={
               <RoleProtectedRoute allowedRoles={["teacher", "admin"]}>
                 <ExamBuilder />
+              </RoleProtectedRoute>
+            } />
+
+            <Route path="/teacher/exam/:examId/submissions" element={
+              <RoleProtectedRoute allowedRoles={["teacher", "admin"]}>
+                <SubmissionList />
               </RoleProtectedRoute>
             } />
 
