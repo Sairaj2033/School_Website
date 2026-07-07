@@ -51,7 +51,7 @@ const TeacherDashboard = () => {
               <h1 className="text-2xl font-bold">
                 Welcome, {displayName || 'Teacher'}!
               </h1>
-              <p className="text-blue-100 mt-1 text-sm">Teacher Dashboard — EduStream Academy</p>
+              <p className="text-blue-100 mt-1 text-sm">Teacher Dashboard | EduStream Academy</p>
             </div>
             <button
               onClick={async () => { await logout(); navigate('/'); }}

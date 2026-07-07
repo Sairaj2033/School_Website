@@ -74,6 +74,9 @@ async function connectDB() {
 
 connectDB();
 
+// Initialize notice scheduler
+require("./scheduler/noticeScheduler");
+
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
@@ -82,6 +85,7 @@ app.get("/api/health", (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
 
 const PORT = process.env.PORT || 5000;
 
