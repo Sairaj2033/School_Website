@@ -6,26 +6,38 @@ exports.getNotices = async (req, res) => {
     // Auto-seed if notices collection is empty
     const count = await Notice.countDocuments();
     if (count === 0) {
-      await Notice.create([
-        {
-          title: "SSOC Contribution Active",
-          category: "Events",
-          content: "EduStream Academy has officially joined the Social Summer of Code (SSOC). Get ready to contribute!",
-          date: new Date("2026-05-26"),
-        },
-        {
-          title: "Summer Vacation Announcement",
-          category: "Academic",
-          content: "The academy will remain closed for summer break starting June 1st, 2026. Online remedial sessions start June 15th.",
-          date: new Date("2026-05-20"),
-        },
-        {
-          title: "Annual STEM Excellence Program",
-          category: "Excellence",
-          content: "Registrations are open for the annual STEM project showcase. Submit your synopsis by next Friday.",
-          date: new Date("2026-05-15"),
-        },
-      ]);
+      const User = require("../models/User");
+      const admin = await User.findOne({ role: "admin" }) || await User.findOne({});
+      const adminId = admin ? admin._id : null;
+
+      if (adminId) {
+        await Notice.create([
+          {
+            title: "SSOC Contribution Active",
+            category: "Events",
+            content: "EduStream Academy has officially joined the Social Summer of Code (SSOC). Get ready to contribute!",
+            message: "We are participating in SSOC.",
+            postedBy: adminId,
+            date: new Date("2026-05-26"),
+          },
+          {
+            title: "Summer Vacation Announcement",
+            category: "Academic",
+            content: "The academy will remain closed for summer break starting June 1st, 2026. Online remedial sessions start June 15th.",
+            message: "Summer break details.",
+            postedBy: adminId,
+            date: new Date("2026-05-20"),
+          },
+          {
+            title: "Annual STEM Excellence Program",
+            category: "Excellence",
+            content: "Registrations are open for the annual STEM project showcase. Submit your synopsis by next Friday.",
+            message: "STEM project showcase registrations open.",
+            postedBy: adminId,
+            date: new Date("2026-05-15"),
+          },
+        ]);
+      }
     }
 
     const data = await Notice.find().sort({ date: -1 });

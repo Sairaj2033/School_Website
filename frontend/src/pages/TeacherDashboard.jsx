@@ -6,6 +6,7 @@ import { getUserRole, hasRole } from '../utils/permissions';
 import NoticePanel from '../components/teacher/NoticePanel';
 import ResourcePanel from '../components/teacher/ResourcePanel';
 import AttendancePanel from '../components/teacher/AttendancePanel';
+import ExamPanel from '../components/teacher/ExamPanel';
 
 const TeacherDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -36,6 +37,7 @@ const TeacherDashboard = () => {
     { id: 'notices',    label: 'Notices' },
     { id: 'resources',  label: 'Resources' },
     { id: 'attendance', label: 'Attendance' },
+    { id: 'exams',      label: 'Exams & Courses' },
   ];
 
   return (
@@ -52,7 +54,7 @@ const TeacherDashboard = () => {
               <p className="text-blue-100 mt-1 text-sm">Teacher Dashboard — EduStream Academy</p>
             </div>
             <button
-              onClick={() => { logout(); navigate('/'); }}
+              onClick={async () => { await logout(); navigate('/'); }}
               className="text-xs bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition"
             >
               Logout
@@ -95,6 +97,7 @@ const TeacherDashboard = () => {
         {activeTab === 'notices'    && <NoticePanel />}
         {activeTab === 'resources'  && <ResourcePanel />}
         {activeTab === 'attendance' && <AttendancePanel />}
+        {activeTab === 'exams'      && <ExamPanel />}
       </div>
     </div>
   );
