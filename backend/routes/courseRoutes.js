@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const courseController = require('../controllers/courseController');
 const { protect } = require('../middleware/Auth');
-const verifyRole = require('../middleware/verifyRole');
+const { checkPermission } = require('../middleware/rbacMiddleware');
 
-router.post('/', protect, verifyRole('teacher', 'admin'), courseController.createCourse);
-router.get('/', protect, courseController.getCourses);
+router.post('/', protect, checkPermission('createAny', 'course'), courseController.createCourse);
+router.get('/', protect, checkPermission('readAny', 'course'), courseController.getCourses);
+router.put('/:id', protect, checkPermission('updateOwn', 'course'), courseController.updateCourse);
+router.delete('/:id', protect, checkPermission('deleteOwn', 'course'), courseController.deleteCourse);
 
 module.exports = router;
