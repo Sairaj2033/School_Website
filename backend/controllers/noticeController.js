@@ -146,6 +146,13 @@ exports.createNotice = async (req, res) => {
       date: finalPublishedAt || now,
     });
 
+    if (noticeStatus === "published") {
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('newNotice', newNotice);
+      }
+    }
+
     return res.status(201).json({
       success: true,
       message: "Notice created successfully",
