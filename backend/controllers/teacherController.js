@@ -125,6 +125,13 @@ const postNotice = async (req, res) => {
       date: finalPublishedAt || now,
     });
 
+    if (noticeStatus === 'published') {
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('newNotice', notice);
+      }
+    }
+
     res.status(201).json({ success: true, message: 'Notice posted successfully!', notice });
   } catch (err) {
     handleError(res, err);
