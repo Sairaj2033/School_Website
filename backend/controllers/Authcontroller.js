@@ -197,9 +197,12 @@ exports.login = async (req, res) => {
     );
 
     // ===== NEW: Generate Refresh Token =====
+    if (!process.env.REFRESH_TOKEN_SECRET) {
+      throw new Error("FATAL: REFRESH_TOKEN_SECRET is not defined.");
+    }
     const refreshToken = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.REFRESH_TOKEN_SECRET || "your_refresh_secret_key",
+      process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "7d" }
     );
 
@@ -500,9 +503,12 @@ exports.refreshToken = async (req, res) => {
       });
     }
 
+    if (!process.env.REFRESH_TOKEN_SECRET) {
+      throw new Error("FATAL: REFRESH_TOKEN_SECRET is not defined.");
+    }
     const decoded = jwt.verify(
       refreshToken,
-      process.env.REFRESH_TOKEN_SECRET || "your_refresh_secret_key"
+      process.env.REFRESH_TOKEN_SECRET
     );
 
     const user = await User.findById(decoded.id);
