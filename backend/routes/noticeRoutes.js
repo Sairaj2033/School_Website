@@ -3,8 +3,9 @@ const router = express.Router();
 const noticeController = require('../controllers/noticeController');
 const { protect, optionalProtect } = require('../middleware/Auth');
 const verifyRole = require('../middleware/verifyRole');
+const multiLevelCache = require('../middleware/cacheMiddleware');
 
-router.get('/', optionalProtect, noticeController.getNotices);
+router.get('/', optionalProtect, multiLevelCache(60), noticeController.getNotices);
 
 // Protected routes for managing notices
 router.post('/', protect, verifyRole('teacher', 'admin'), noticeController.createNotice);
