@@ -46,6 +46,9 @@ exports.getExam = async (req, res) => {
 
     // Hide answers from students
     if (req.user.role === 'student') {
+      if (!exam.isPublished) {
+        return res.status(403).json({ success: false, error: "Access denied. This exam is not published." });
+      }
       const examData = exam.toObject();
       examData.questions.forEach(q => delete q.correctAnswer);
       return res.status(200).json({ success: true, data: examData });
